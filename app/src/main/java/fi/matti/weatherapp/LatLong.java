@@ -1,4 +1,4 @@
-package fi.matti.weathero;
+package fi.matti.weatherapp;
 
 /**
  * This class is to store Latitude and Longitude.
