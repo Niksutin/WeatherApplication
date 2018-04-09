@@ -1,6 +1,6 @@
-package fi.matti.weathero;
+package fi.matti.weatherapp;
 
-import java.util.List;
+import org.json.JSONObject;
 
 /**
  * Interface for MyDownloadListener.
@@ -8,6 +8,6 @@ import java.util.List;
  * Created by matti on 14.3.2018.
  */
 public interface MyDownloadListener {
-    void onCompletion(List<Weather> data);
+    void onCompletion(JSONObject jsonObject);
     void onFailure(final String msg);
 }

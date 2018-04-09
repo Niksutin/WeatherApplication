@@ -1,11 +1,9 @@
-package fi.matti.weathero;
+package fi.matti.weatherapp;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -13,10 +11,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * This class is a Service that gets the Location based on GPS coordinates.
@@ -76,50 +70,6 @@ public class LocationService extends Service {
     }
 
     /**
-     * Reverse geocodes location into Address object.
-     *
-     * Contains one Address object which is the closest Address based on the location
-     * parameter.
-     *
-     * @param location The location that needs to be reverse geocode into address.
-     * @return Closest address based on the location parameter.
-     */
-    public Address reverseGeocode(Location location) {
-        Debug.print("Reverse geocoding started");
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-        String errorMessage = "";
-        ArrayList<Address> addressList = null;
-
-        try {
-            addressList = (ArrayList<Address>) geocoder.getFromLocation(
-                    location.getLatitude(),
-                    location.getLongitude(),
-                    1);
-        } catch(IOException ioException) {
-            errorMessage = getString(R.string.service_not_available);
-            Debug.print(errorMessage);
-        } catch(IllegalArgumentException illegalArgumentException) {
-            errorMessage = getString(R.string.invalid_lat_long_used);
-            Debug.print(errorMessage + ". " +
-                    "Latitude = " + location.getLatitude() +
-                    ", Longitude = " +
-                    location.getLongitude() + ". " +  illegalArgumentException);
-        }
-
-        if (addressList == null || addressList.size() == 0) {
-            if (errorMessage.isEmpty()) {
-                errorMessage = getString(R.string.no_address_found);
-                Debug.print(errorMessage);
-            }
-        } else {
-            Debug.print("Address found");
-            Debug.print(addressList.get(0).toString());
-            return addressList.get(0);
-        }
-        return null;
-    }
-
-    /**
      * Broadcasts the location and reverse geocoded city.
      *
      * @param location GPS location.
@@ -127,8 +77,6 @@ public class LocationService extends Service {
     public void broadcastLocation(Location location) {
         Intent intent = new Intent("location_update");
         intent.putExtra("location", location);
-        String city = reverseGeocode(location).getSubAdminArea();
-        intent.putExtra("city", city);
         Debug.print("Location was broadcast: " + location);
         sendBroadcast(intent);
     }

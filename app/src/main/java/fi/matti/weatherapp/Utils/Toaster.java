@@ -1,4 +1,4 @@
-package fi.matti.weathero.Utils;
+package fi.matti.weatherapp.Utils;
 
 import android.content.Context;
 import android.view.Gravity;

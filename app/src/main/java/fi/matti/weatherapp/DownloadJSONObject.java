@@ -1,37 +1,33 @@
-package fi.matti.weathero;
+package fi.matti.weatherapp;
 
 import android.os.AsyncTask;
 
-import org.xmlpull.v1.XmlPullParserException;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class is for downloading data with HttpUrlConnection without pausing the main thread.
  *
  * Created by matti on 13.3.2018.
  */
-public class DownloadWeatherTask extends AsyncTask<String, Void, Boolean> {
+public class DownloadJSONObject extends AsyncTask<String, Void, Boolean> {
 
     private final MyDownloadListener myDownloadListener;
     private String message;
-    private List<Weather> weatherData = new ArrayList<>();
+    private JSONObject jsonObject;
 
-    DownloadWeatherTask(MyDownloadListener myDownloadListener) {
+    DownloadJSONObject(MyDownloadListener myDownloadListener) {
         this.myDownloadListener = myDownloadListener;
     }
 
     /**
-     * Do a task in the background. Connect to a URL, get input stream and send it to
-     * WeatherXMLParser which parses the weather data from the fetched XML file.
-     *
-     * @param uris Strings of URLs to connect to.
-     * @return true if result was found, false if not.
      */
     @Override
     protected Boolean doInBackground(String... uris) {
@@ -46,10 +42,16 @@ public class DownloadWeatherTask extends AsyncTask<String, Void, Boolean> {
             connection.setDoInput(true);
             connection.connect();
             in = connection.getInputStream();
-            WeatherXmlParser parser = new WeatherXmlParser();
-            weatherData = parser.parse(in, Constants.WEATHER_DATA_POSITIONS, Constants.WEATHER_DATA_VALUES);
+            String line;
+            StringBuilder result = new StringBuilder();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
+            while((line = bufferedReader.readLine()) != null) {
+                result.append(line);
+            }
+            in.close();
+            jsonObject = new JSONObject(result.toString());
             return true;
-        } catch (IOException | XmlPullParserException exception) {
+        } catch (IOException |JSONException exception) {
             exception.printStackTrace();
             message = "Error occured. Download failed.";
         } finally {
@@ -77,6 +79,6 @@ public class DownloadWeatherTask extends AsyncTask<String, Void, Boolean> {
             if (myDownloadListener != null) myDownloadListener.onFailure(message);
             return;
         }
-        if (myDownloadListener != null) myDownloadListener.onCompletion(weatherData);
+        if (myDownloadListener != null) myDownloadListener.onCompletion(jsonObject);
     }
 }

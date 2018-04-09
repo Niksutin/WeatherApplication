@@ -5,7 +5,24 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/lightBlue"
-    tools:context="fi.matti.weathero.MainActivity">
+    tools:context="fi.matti.weatherapp.MainActivity">
+
+    <TextView android:id="@+id/latitude"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/white"
+        android:text="@string/latitude"/>
+
+    <TextView android:id="@+id/longitude"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:text="@string/longitude"/>
 
     <TextView android:id="@+id/cityView"
         android:layout_width="match_parent"

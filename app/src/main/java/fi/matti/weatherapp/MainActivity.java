@@ -1,4 +1,4 @@
-package fi.matti.weathero;
+package fi.matti.weatherapp;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -16,14 +18,19 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
-import fi.matti.weathero.Utils.Toaster;
+import fi.matti.weatherapp.Utils.Toaster;
 
 public class MainActivity extends AppCompatActivity implements MyDownloadListener {
 
@@ -31,9 +38,10 @@ public class MainActivity extends AppCompatActivity implements MyDownloadListene
     private BroadcastReceiver broadcastReceiver;
     private TextView cityView;
     private TextView weatherView;
+    private TextView latitude;
+    private TextView longitude;
     private Locale locale;
     public Context context;
-    String currentCity;
     int permissionCheck;
 
     @Override
@@ -69,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements MyDownloadListene
     public void setViews() {
         cityView = findViewById(R.id.cityView);
         weatherView = findViewById(R.id.weatherView);
+        latitude = findViewById(R.id.latitude);
+        longitude = findViewById(R.id.longitude);
     }
 
     /**
@@ -100,16 +110,22 @@ public class MainActivity extends AppCompatActivity implements MyDownloadListene
     /**
      * Display address information(city) in the UI.
      *
-     * @param data String of data to be displayed.
+     * @param address
      */
-    public void showLocationAndWeather(String data) {
-        currentCity = data.split(" ")[0];
-        cityView.setText(currentCity);
+    public void showLocationAndWeather(Location location, Address address) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-        new DownloadWeatherTask(this).execute(Constants.SERVER_QUERY +
-                currentCity +
-                "&parameters=t2m,ws_10min,wd_10min,r_1h,n_man");
+
+        DecimalFormat df2 = new DecimalFormat(".##");
+        latitude.setText("Latitude: " + String.valueOf(df2.format(location.getLatitude())));
+        longitude.setText("Longitude: " + String.valueOf(df2.format(location.getLongitude())));
+        if (address.getAdminArea() == null) {
+            cityView.setText(address.getSubAdminArea());
+        } else {
+            cityView.setText(address.getAdminArea());
+        }
+
+        new DownloadJSONObject(this).execute(Constants.SERVER_QUERY_SAMPLE);
     }
 
     @Override
@@ -146,17 +162,64 @@ public class MainActivity extends AppCompatActivity implements MyDownloadListene
 
                 @Override
                 public void onReceive(Context context, Intent intent) {
-                    Location location = intent.getExtras().getParcelable("location");
-                    String city = intent.getExtras().getString("city");
-                    Debug.print("Location was received: " + location + " city: " + city);
-                    setCurrentLocation(location);
-                    showLocationAndWeather(city);
+                    if (intent.getExtras().getParcelable("location") != null) {
+                        Location location = intent.getExtras().getParcelable("location");
+                        Debug.print("Location was received: " + location);
+                        setCurrentLocation(location);
+                        showLocationAndWeather(location, reverseGeocode(location));
+                    } else {
+                        Debug.print("Location was not received!");
+                    }
+
                 }
             };
         }
         registerReceiver(broadcastReceiver, new IntentFilter("location_update"));
         Intent intent = new Intent(this, LocationService.class);
         startService(intent);
+    }
+
+    /**
+     * Reverse geocodes location into Address object.
+     *
+     * Contains one Address object which is the closest Address based on the location
+     * parameter.
+     *
+     * @param location The location that needs to be reverse geocode into address.
+     * @return Closest address based on the location parameter.
+     */
+    public Address reverseGeocode(Location location) {
+        Debug.print("Reverse geocoding started");
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        String errorMessage = "";
+        ArrayList<Address> addressList = null;
+        try {
+            addressList = (ArrayList<Address>) geocoder.getFromLocation(
+                    location.getLatitude(),
+                    location.getLongitude(),
+                    1);
+        } catch (IOException ioException) {
+            errorMessage = getString(R.string.service_not_available);
+            Debug.print(errorMessage);
+        } catch (IllegalArgumentException illegalArgumentException) {
+            errorMessage = getString(R.string.invalid_lat_long_used);
+            Debug.print(errorMessage + ". " +
+                    "Latitude = " + location.getLatitude() +
+                    ", Longitude = " +
+                    location.getLongitude() + ". " +  illegalArgumentException);
+        }
+
+        if (addressList == null || addressList.size() == 0) {
+            if (errorMessage.isEmpty()) {
+                errorMessage = getString(R.string.no_address_found);
+                Debug.print(errorMessage);
+            }
+        } else {
+            Debug.print("Address found");
+            Debug.print(addressList.get(0).toString());
+            return addressList.get(0);
+        }
+        return null;
     }
 
     /**
@@ -195,35 +258,38 @@ public class MainActivity extends AppCompatActivity implements MyDownloadListene
     }
 
     /**
-     * Set weatherView's text with the data gathered from DownLoadWeatherTask. Perform
-     * this method after successful task completion.
      *
-     * @param data List of Weather objects from result of DownloadWeatherTask.
+     * @param jsonObject
      */
     @Override
-    public void onCompletion(List<Weather> data) {
-        if (data == null || data.size() == 0) {
+    public void onCompletion(JSONObject jsonObject) {
+        Weather weather = null;
+
+        try {
+            String temp = jsonObject.getJSONObject("main").getString("temp");
+            String wspeed = jsonObject.getJSONObject("wind").getString("speed");
+            String clouds = jsonObject.getJSONObject("clouds").getString("all");
+            weather = new Weather(temp, wspeed, clouds);
+        } catch (JSONException exception) {
+            exception.printStackTrace();
+        }
+
+        if (weather == null) {
             weatherView.setText(R.string.no_address_found);
         } else {
-            Weather weather = data.get(0);
             String temperature = getResources().getString(R.string.temperature);
             String windSpeed = getResources().getString(R.string.windSpeed);
-            String windDirection = getResources().getString(R.string.windDirection);
-            String precipitation = getResources().getString(R.string.precipitation);
             String cloudiness = getResources().getString(R.string.cloudiness);
 
-            weatherView.setText(timeDateOfObservation(weather.getTimeStamp()) + "\n" +
-                    temperature + " " + weather.getTemperature() + " °C\n" +
+            weatherView.setText(temperature + " " + weather.getTemperature() + " °F\n" +
                     windSpeed + " " + weather.getWindSpeed() + " m/s\n" +
-                    windDirection + " " + weather.getWindDirection() + " °\n" +
-                    precipitation + " " + weather.getPrecipitation() + " mm\n" +
-                    cloudiness + " " + weather.getCloudiness());
+                    cloudiness + " " + weather.getCloudiness() + "%");
         }
     }
 
     /**
      * Set error message into weather TextView if failed to perform task.
-     * @param message Message from DownloadWeatherTask to be displayed.
+     * @param message Message from DownloadJSONObject to be displayed.
      */
     @Override
     public void onFailure(String message) {
