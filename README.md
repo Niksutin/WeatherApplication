@@ -3,4 +3,4 @@ So far so simple weather application that is supposed to show weather data based
 
 This application uses [OpenWeatherMap API](https://openweathermap.org) as weather data resource.
 
-[Privacy Policy](https://sites.google.com/view/weatherapp-privacy-policy/etusivu)
+Weatherapp's [Privacy Policy](https://sites.google.com/view/weatherapp-privacy-policy/etusivu)
