@@ -5,7 +5,7 @@ import org.json.JSONObject;
 /**
  * Interface for MyDownloadListener.
  *
- * Created by matti on 14.3.2018.
+ * Created by Niko on 14.3.2018.
  */
 public interface MyDownloadListener {
     void onCompletion(JSONObject jsonObject);
