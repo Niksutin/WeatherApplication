@@ -1,14 +1,26 @@
 <resources>
-    <string name="app_name">Weathero</string>
+    <string name="app_name">Weatherapp</string>
+
+    <!-- Error messages -->
     <string name="service_not_available">Service is not available</string>
     <string name="invalid_lat_long_used">Invalid Latitude or Longitude used</string>
-    <string name="no_address_found">No valid address found</string>
+    <string name="no_valid_weather">No valid weather data</string>
+    <string name="invalid_json">Invalid JSONObject</string>
+    <string name="error_message">Error occurred</string>
+    <string name="invalid_address">Invalid Address</string>
+    <string name="gps_disabled">Gps is disabled!</string>
+
+    <!-- Success messages -->
     <string name="address_found">Address was found</string>
+
+    <!-- App default texts -->
+    <string name="latitude">Latitude:\u0020</string>
+    <string name="longitude">Longitude:\u0020</string>
     <string name="city">City</string>
     <string name="weather">Weather</string>
     <string name="temperature">Temperature:</string>
     <string name="windSpeed">Wind speed:</string>
-    <string name="windDirection">Wind direction:</string>
-    <string name="precipitation">Precipitation:</string>
-    <string name="cloudiness">Cloudiness:</string>
+    <string name="humidity">Humidity:</string>
+    <string name="forecasts">Forecasts</string>
+    <string name="currentWeather">Current Weather</string>
 </resources>

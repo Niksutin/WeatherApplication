@@ -1,35 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context="fi.matti.weatherapp.Activities.MainActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/lightBlue"
-    tools:context="fi.matti.weathero.MainActivity">
+    android:background="@color/lightBlue">
 
-    <TextView android:id="@+id/cityView"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="30sp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:textColor="@color/white"
-        android:text="@string/city"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <ImageView android:id="@+id/cloudImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_cloud"
-        android:layout_gravity="center" />
+        <TextView android:id="@+id/cityView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:paddingTop="10dp"
+            android:textColor="@color/white"
+            android:text="@string/city"/>
 
-    <TextView   android:id="@+id/weatherView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textColor="@color/white"
-        android:layout_marginTop="20dp"
-        android:textSize="20sp"
-        android:text="@string/weather"/>
+        <TextView android:id="@+id/messageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="30sp"
+            android:textColor="@color/red" />
 
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/currentWeather"
+                android:background="@color/blue"
+                android:gravity="center"
+                android:textSize="30sp"
+                android:textColor="@color/white"/>
+
+            <TextView android:id="@+id/currentWeatherView"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:background="@color/blue"
+                android:textColor="@color/white"
+                android:paddingBottom="20dp"
+                android:textSize="20sp">
+            </TextView>
+
+
+
+            <TextView android:id="@+id/forecastsText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="30sp"
+                android:textColor="@color/white"
+                android:text="@string/forecasts"
+                android:background="@color/darkBlue" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/forecasts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="7dp"
+                android:paddingBottom="7dp"
+                android:background="@color/lightBlue" />
+
+            <ProgressBar android:id="@+id/loadingSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:progressDrawable="@drawable/circular_progress_bar"
+                android:visibility="invisible"
+                android:indeterminateTint="@color/white"
+                android:background="@color/lightBlue"/>
+
+        </LinearLayout>
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>
+

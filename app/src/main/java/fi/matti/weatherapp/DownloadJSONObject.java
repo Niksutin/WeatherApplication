@@ -1,44 +1,41 @@
-package fi.matti.weathero;
+package fi.matti.weatherapp;
 
 import android.os.AsyncTask;
 
-import org.xmlpull.v1.XmlPullParserException;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class is for downloading data with HttpUrlConnection without pausing the main thread.
  *
- * Created by matti on 13.3.2018.
+ * Created by Niko on 13.3.2018.
+ * Last updated by Niko on 23.4.2018.
  */
-public class DownloadWeatherTask extends AsyncTask<String, Void, Boolean> {
+public class DownloadJSONObject extends AsyncTask<String, Void, Boolean> {
 
     private final MyDownloadListener myDownloadListener;
     private String message;
-    private List<Weather> weatherData = new ArrayList<>();
+    private JSONObject jsonObject;
 
-    DownloadWeatherTask(MyDownloadListener myDownloadListener) {
+    public DownloadJSONObject(MyDownloadListener myDownloadListener) {
         this.myDownloadListener = myDownloadListener;
     }
 
     /**
-     * Do a task in the background. Connect to a URL, get input stream and send it to
-     * WeatherXMLParser which parses the weather data from the fetched XML file.
-     *
-     * @param uris Strings of URLs to connect to.
-     * @return true if result was found, false if not.
+     * Establish a HttpURLConnection to a URL and fetch JSONObject from it.
      */
     @Override
     protected Boolean doInBackground(String... uris) {
         InputStream in = null;
         try {
             URL url = new URL(uris[0]);
-            Debug.print(uris[0]);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setReadTimeout(Constants.READ_TIMEOUT);
             connection.setConnectTimeout(Constants.CONNECT_TIMEOUT);
@@ -46,19 +43,23 @@ public class DownloadWeatherTask extends AsyncTask<String, Void, Boolean> {
             connection.setDoInput(true);
             connection.connect();
             in = connection.getInputStream();
-            WeatherXmlParser parser = new WeatherXmlParser();
-            weatherData = parser.parse(in, Constants.WEATHER_DATA_POSITIONS, Constants.WEATHER_DATA_VALUES);
+            String line;
+            StringBuilder result = new StringBuilder();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
+            while ((line = bufferedReader.readLine()) != null) {
+                result.append(line);
+            }
+            in.close();
+            jsonObject = new JSONObject(result.toString());
             return true;
-        } catch (IOException | XmlPullParserException exception) {
-            exception.printStackTrace();
-            message = "Error occured. Download failed.";
+        } catch (IOException |JSONException exception) {
+            message = "Error occurred. Download failed.";
         } finally {
             if (in != null) {
-                Debug.print("Closing input stream!");
                 try {
                     in.close();
-                } catch(IOException e) {
-                    e.printStackTrace();
+                } catch (IOException e) {
+                    message = "Error occurred in input stream.";
                 }
             }
         }
@@ -69,7 +70,7 @@ public class DownloadWeatherTask extends AsyncTask<String, Void, Boolean> {
      * Call MyDownloadListener's functions: onFailure/onCompletion based on
      * gotten result from doInBackground method above.
      *
-     * @param result return value from doInBackground method.
+     * @param result true if download successful, false if download failed.
      */
     @Override
     protected void onPostExecute(Boolean result) {
@@ -77,6 +78,6 @@ public class DownloadWeatherTask extends AsyncTask<String, Void, Boolean> {
             if (myDownloadListener != null) myDownloadListener.onFailure(message);
             return;
         }
-        if (myDownloadListener != null) myDownloadListener.onCompletion(weatherData);
+        if (myDownloadListener != null) myDownloadListener.onCompletion(jsonObject);
     }
 }

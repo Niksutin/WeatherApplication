@@ -1,4 +1,4 @@
-package fi.matti.weathero;
+package fi.matti.weatherapp;
 
 import org.junit.Test;
 
