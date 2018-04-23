@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="640"
+    android:viewportHeight="640">
+
+    <path
+        android:fillColor="#a5a4a4"
+        android:strokeWidth="1"
+        android:pathData="M374.91 256.73C374.91 295.44 340.1 326.87 297.22 326.87C254.33 326.87 219.52 295.44 219.52 256.73C219.52 218.01 254.33 186.58 297.22 186.58C340.1 186.58 374.91 218.01 374.91 256.73Z" />
+    <path
+        android:fillColor="#c2c2c2"
+        android:strokeWidth="1"
+        android:pathData="M523.23 271.75C523.23 313.2 456.48 346.85 374.25 346.85C292.03 346.85 225.27 313.2 225.27 271.75C225.27 230.3 292.03 196.66 374.25 196.66C456.48 196.66 523.23 230.3 523.23 271.75Z" />
+    <path
+        android:fillColor="#cfcfcf"
+        android:strokeWidth="1"
+        android:pathData="M451.95 215.68C451.95 254.39 417.14 285.82 374.25 285.82C331.37 285.82 296.56 254.39 296.56 215.68C296.56 176.96 331.37 145.53 374.25 145.53C417.14 145.53 451.95 176.96 451.95 215.68Z" />
+    <path
+        android:fillColor="#dedede"
+        android:strokeWidth="1"
+        android:pathData="M530.31 256.73C530.31 295.44 495.49 326.87 452.61 326.87C409.73 326.87 374.91 295.44 374.91 256.73C374.91 218.01 409.73 186.58 452.61 186.58C495.49 186.58 530.31 218.01 530.31 256.73Z" />
+    <path
+        android:fillColor="#dadada"
+        android:strokeWidth="1"
+        android:pathData="M265.09 382.36C265.09 421.07 230.27 452.51 187.39 452.51C144.51 452.51 109.69 421.07 109.69 382.36C109.69 343.65 144.51 312.22 187.39 312.22C230.27 312.22 265.09 343.65 265.09 382.36Z" />
+    <path
+        android:fillColor="#e4e4e4"
+        android:strokeWidth="1"
+        android:pathData="M413.41 397.38C413.41 438.83 346.65 472.48 264.43 472.48C182.2 472.48 115.45 438.83 115.45 397.38C115.45 355.94 182.2 322.29 264.43 322.29C346.65 322.29 413.41 355.94 413.41 397.38Z" />
+    <path
+        android:fillColor="#ececec"
+        android:strokeWidth="1"
+        android:pathData="M342.78 342C342.78 380.72 307.97 412.15 265.09 412.15C222.2 412.15 187.39 380.72 187.39 342C187.39 303.29 222.2 271.86 265.09 271.86C307.97 271.86 342.78 303.29 342.78 342Z" />
+    <path
+        android:fillColor="#f5f5f5"
+        android:strokeWidth="1"
+        android:pathData="M420.48 382.36C420.48 421.07 385.67 452.51 342.78 452.51C299.9 452.51 265.09 421.07 265.09 382.36C265.09 343.65 299.9 312.22 342.78 312.22C385.67 312.22 420.48 343.65 420.48 382.36Z" />
+    <path
+        android:fillColor="#1d30e6"
+        android:strokeWidth="1"
+        android:pathData="M282.58 473.86C282.58 485.23 272.43 494.47 259.93 494.47C247.42 494.47 237.27 485.23 237.27 473.86C237.27 462.49 247.42 453.26 259.93 453.26C272.43 453.26 282.58 462.49 282.58 473.86Z" />
+    <path
+        android:fillColor="#1d37e6"
+        android:strokeWidth="1"
+        android:pathData="M270.39 449.17L280.86 473.86L259.93 473.86L238.99 473.86L249.46 449.17L259.93 424.48L270.39 449.17Z" />
+    <path
+        android:fillColor="#1d30e6"
+        android:strokeWidth="1"
+        android:pathData="M327.89 428.57C327.89 439.94 317.74 449.17 305.24 449.17C292.73 449.17 282.58 439.94 282.58 428.57C282.58 417.2 292.73 407.96 305.24 407.96C317.74 407.96 327.89 417.2 327.89 428.57Z" />
+    <path
+        android:fillColor="#1d37e6"
+        android:strokeWidth="1"
+        android:pathData="M315.7 403.88L326.17 428.57L305.24 428.57L284.31 428.57L294.77 403.88L305.24 379.19L315.7 403.88Z" />
+    <path
+        android:fillColor="#1d30e6"
+        android:strokeWidth="1"
+        android:pathData="M371.48 473.86C371.48 485.23 361.33 494.47 348.82 494.47C336.32 494.47 326.17 485.23 326.17 473.86C326.17 462.49 336.32 453.26 348.82 453.26C361.33 453.26 371.48 462.49 371.48 473.86Z" />
+    <path
+        android:fillColor="#1d37e6"
+        android:strokeWidth="1"
+        android:pathData="M359.29 449.17L369.76 473.86L348.82 473.86L327.89 473.86L338.36 449.17L348.82 424.48L359.29 449.17Z" />
+</vector>

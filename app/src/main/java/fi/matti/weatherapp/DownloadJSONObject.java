@@ -15,7 +15,8 @@ import java.net.URL;
 /**
  * This class is for downloading data with HttpUrlConnection without pausing the main thread.
  *
- * Created by matti on 13.3.2018.
+ * Created by Niko on 13.3.2018.
+ * Last updated by Niko on 23.4.2018.
  */
 public class DownloadJSONObject extends AsyncTask<String, Void, Boolean> {
 
@@ -23,18 +24,18 @@ public class DownloadJSONObject extends AsyncTask<String, Void, Boolean> {
     private String message;
     private JSONObject jsonObject;
 
-    DownloadJSONObject(MyDownloadListener myDownloadListener) {
+    public DownloadJSONObject(MyDownloadListener myDownloadListener) {
         this.myDownloadListener = myDownloadListener;
     }
 
     /**
+     * Establish a HttpURLConnection to a URL and fetch JSONObject from it.
      */
     @Override
     protected Boolean doInBackground(String... uris) {
         InputStream in = null;
         try {
             URL url = new URL(uris[0]);
-            Debug.print(uris[0]);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setReadTimeout(Constants.READ_TIMEOUT);
             connection.setConnectTimeout(Constants.CONNECT_TIMEOUT);
@@ -45,22 +46,20 @@ public class DownloadJSONObject extends AsyncTask<String, Void, Boolean> {
             String line;
             StringBuilder result = new StringBuilder();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
-            while((line = bufferedReader.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != null) {
                 result.append(line);
             }
             in.close();
             jsonObject = new JSONObject(result.toString());
             return true;
         } catch (IOException |JSONException exception) {
-            exception.printStackTrace();
-            message = "Error occured. Download failed.";
+            message = "Error occurred. Download failed.";
         } finally {
             if (in != null) {
-                Debug.print("Closing input stream!");
                 try {
                     in.close();
-                } catch(IOException e) {
-                    e.printStackTrace();
+                } catch (IOException e) {
+                    message = "Error occurred in input stream.";
                 }
             }
         }
@@ -71,7 +70,7 @@ public class DownloadJSONObject extends AsyncTask<String, Void, Boolean> {
      * Call MyDownloadListener's functions: onFailure/onCompletion based on
      * gotten result from doInBackground method above.
      *
-     * @param result return value from doInBackground method.
+     * @param result true if download successful, false if download failed.
      */
     @Override
     protected void onPostExecute(Boolean result) {

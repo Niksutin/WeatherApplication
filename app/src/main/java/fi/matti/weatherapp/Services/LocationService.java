@@ -1,4 +1,4 @@
-package fi.matti.weatherapp;
+package fi.matti.weatherapp.Services;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
@@ -9,14 +9,19 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
+
+import fi.matti.weatherapp.Constants;
 
 /**
  * This class is a Service that gets the Location based on GPS coordinates.
  *
- * Created by matti on 17.3.2018.
- * Last updated by matti on 17.3.2018.
+ * Gets GPS location and broadcasts that location to BroadcastReceivers.
+ * If GPS not enabled broadcasts intent to build AlertDialog.
+ * If GPS is enabled broadcasts intent to clear error message.
+ *
+ * Created by Niko on 17.3.2018.
+ * Last updated by Niko on 23.4.2018.
  */
 public class LocationService extends Service {
 
@@ -30,8 +35,9 @@ public class LocationService extends Service {
     }
 
     /**
-     * LocationListener is set here in to broadcast Location to the intent
-     * with identifier: location_update.
+     * LocationListener is set here to broadcast Location to the intent
+     * with identifier: location_update <-- activates weather fetch
+     * If gps is disabled broadcasts: gps_dialog <-- activates AlertDialog in MainActivity
      */
     @SuppressLint("MissingPermission")
     @Override
@@ -49,35 +55,52 @@ public class LocationService extends Service {
 
             @Override
             public void onProviderEnabled(String provider) {
+                broadcastString("gps_enabled");
             }
 
             @Override
             public void onProviderDisabled(String provider) {
-                Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(i);
+                broadcastString("gps_dialog");
             }
         };
+
         locationManager = (LocationManager) getApplication().
                 getSystemService(Context.LOCATION_SERVICE);
 
         if (locationManager != null) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                    Constants.GPS_TIME_INTERVAL,
-                    Constants.GPS_MAX_DISTANCE,
-                    locationListener);
+            if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                        Constants.GPS_TIME_INTERVAL,
+                        Constants.GPS_MAX_DISTANCE,
+                        locationListener);
+            } else {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        Constants.GPS_TIME_INTERVAL,
+                        Constants.GPS_MAX_DISTANCE,
+                        locationListener);
+            }
+
         }
     }
 
     /**
-     * Broadcasts the location and reverse geocoded city.
+     * Broadcast the location to BroadcastReceivers.
      *
      * @param location GPS location.
      */
     public void broadcastLocation(Location location) {
         Intent intent = new Intent("location_update");
         intent.putExtra("location", location);
-        Debug.print("Location was broadcast: " + location);
+        sendBroadcast(intent);
+    }
+
+    /**
+     * Broadcast intent with just a String to be handled by BroadcastReceivers.
+     *
+     * @param intentName String object representing intent action.
+     */
+    public void broadcastString(String intentName) {
+        Intent intent = new Intent(intentName);
         sendBroadcast(intent);
     }
 
