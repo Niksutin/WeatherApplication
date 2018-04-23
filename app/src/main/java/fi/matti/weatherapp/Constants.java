@@ -8,11 +8,11 @@ package fi.matti.weatherapp;
  */
 public final class Constants {
 
-    // Updates GPS every 30 seconds
+    // Updates GPS every 60 seconds
     public static final long GPS_TIME_INTERVAL = 60000; // Milliseconds
 
-    // Updates GPS every 0 meters
-    public static final float GPS_MAX_DISTANCE = 0; // Meters
+    // Updates GPS every 500 meters
+    public static final float GPS_MAX_DISTANCE = 500; // Meters
 
     // Query urls
     public static final String QUERY_CURRENT = "http://api.openweathermap.org/data/2.5/weather?q=";
